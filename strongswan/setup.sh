@@ -2,12 +2,12 @@
 
 set -eu
 
-# Their real address
-THEIR_REAL_ADDRESS=$1
-
 # Single digit 0-255
-OUR_SUBNET_START=$2
-THEIR_SUBNET_START=$3
+OUR_SUBNET_START=$1
+THEIR_SUBNET_START=$2
+
+# Their real address
+THEIR_REAL_ADDRESS=$3
 
 
 OUR_REAL_ADDRESS=$(ip -4 route get 8.8.8.8 | awk {'print $7'} | tr -d '\n')
