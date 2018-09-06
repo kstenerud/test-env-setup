@@ -1,7 +1,6 @@
 #!/bin/sh
 
 set -eu
-set -x
 
 # Single digit 0-255
 OUR_SUBNET_START=$1
