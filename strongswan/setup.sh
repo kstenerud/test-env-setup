@@ -1,6 +1,7 @@
 #!/bin/sh
 
 set -eu
+set -x
 
 # Single digit 0-255
 OUR_SUBNET_START=$1
@@ -14,14 +15,23 @@ OUR_REAL_ADDRESS=$(ip -4 route get 8.8.8.8 | awk {'print $7'} | tr -d '\n')
 OUR_SUBNET=10.0.${OUR_SUBNET_START}
 THEIR_SUBNET=10.0.${THEIR_SUBNET_START}
 
-sudo apt install -y strongswan
+echo "Our address:   ${OUR_REAL_ADDRESS}"
+echo "Their address: ${THEIR_REAL_ADDRESS}"
+echo "Out Subnet:    ${OUR_SUBNET}.0/24"
+echo "Their subnet:  ${THEIR_SUBNET}.0/24"
+echo
 
-sudo ip address del ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
-sudo ip address add ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
-sudo ip route del ${THEIR_SUBNET}.0/24
-sudo ip route add ${THEIR_SUBNET}.0/24 dev ens3 src ${OUR_SUBNET}.1
+apt install -y strongswan
 
-sudo cat << EOF > /etc/ipsec.conf
+set +e
+ip address del ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
+ip route del ${THEIR_SUBNET}.0/24
+set -e
+
+ip address add ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
+ip route add ${THEIR_SUBNET}.0/24 dev ens3 src ${OUR_SUBNET}.1
+
+cat << EOF > /etc/ipsec.conf
 # Test config
 config setup
 
@@ -45,12 +55,12 @@ conn net-net
 	auto=add
 EOF
 
-sudo cat << EOF > /etc/ipsec.secrets
+cat << EOF > /etc/ipsec.secrets
 # Test config
 : RSA hostakey.pem
 EOF
 
-sudo cat << EOF > /etc/ipsec.d/certs/5a23788d.0
+cat << EOF > /etc/ipsec.d/certs/5a23788d.0
 -----BEGIN CERTIFICATE-----
 MIIDbTCCAlWgAwIBAgIJAIQnwC0gy/r0MA0GCSqGSIb3DQEBBQUAME0xCzAJBgNV
 BAYTAlVTMRAwDgYDVQQIDAdBcml6b25hMRAwDgYDVQQKDAdUZXN0bGliMQ0wCwYD
@@ -74,7 +84,7 @@ CTyJNNseEBx0O9XmvmYlZ3o=
 -----END CERTIFICATE-----
 EOF
 
-sudo cat << EOF > /etc/ipsec.d/certs/hostacert.pem
+cat << EOF > /etc/ipsec.d/certs/hostacert.pem
 -----BEGIN CERTIFICATE-----
 MIICjTCCAXUCAQEwDQYJKoZIhvcNAQEFBQAwTTELMAkGA1UEBhMCVVMxEDAOBgNV
 BAgMB0FyaXpvbmExEDAOBgNVBAoMB1Rlc3RsaWIxDTALBgNVBAsMBFRlc3QxCzAJ
@@ -93,7 +103,7 @@ u5B/OUmw8K6MHdzgvyVp5qjVljqfBlUBsmm8TkfMbR61
 -----END CERTIFICATE-----
 EOF
 
-sudo cat << EOF > /etc/ipsec.d/certs/hostakey.pem
+cat << EOF > /etc/ipsec.d/certs/hostakey.pem
 -----BEGIN PRIVATE KEY-----
 MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALqO7PyPWJRviOZN
 cYq84WYItd6WryR4cryhs+hCNoANkvYR5CoZTzx082hdNE52vlYmGCrBG3hQTxO8
@@ -112,7 +122,7 @@ H0jOhDdJBKpns4w=
 -----END PRIVATE KEY-----
 EOF
 
-sudo aa-enabled
+aa-enabled
 
 echo "
 Strongswan set up. To start the service:
