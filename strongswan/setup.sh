@@ -16,11 +16,11 @@ THEIR_SUBNET=10.0.${THEIR_SUBNET_START}
 
 sudo apt install -y strongswan
 
-ip address add ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
-ip route del ${THEIR_SUBNET}.0/24
-ip route add ${THEIR_SUBNET}.0/24 dev ens3 src ${OUR_SUBNET}.1
+sudo ip address add ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
+sudo ip route del ${THEIR_SUBNET}.0/24
+sudo ip route add ${THEIR_SUBNET}.0/24 dev ens3 src ${OUR_SUBNET}.1
 
-cat << EOF > /etc/ipsec.conf
+sudo cat << EOF > /etc/ipsec.conf
 # Test config
 config setup
 
@@ -44,12 +44,12 @@ conn net-net
 	auto=add
 EOF
 
-cat << EOF > /etc/ipsec.secrets
+sudo cat << EOF > /etc/ipsec.secrets
 # Test config
 : RSA hostakey.pem
 EOF
 
-cat << EOF > /etc/ipsec.d/certs/5a23788d.0
+sudo cat << EOF > /etc/ipsec.d/certs/5a23788d.0
 -----BEGIN CERTIFICATE-----
 MIIDbTCCAlWgAwIBAgIJAIQnwC0gy/r0MA0GCSqGSIb3DQEBBQUAME0xCzAJBgNV
 BAYTAlVTMRAwDgYDVQQIDAdBcml6b25hMRAwDgYDVQQKDAdUZXN0bGliMQ0wCwYD
@@ -73,7 +73,7 @@ CTyJNNseEBx0O9XmvmYlZ3o=
 -----END CERTIFICATE-----
 EOF
 
-cat << EOF > /etc/ipsec.d/certs/hostacert.pem
+sudo cat << EOF > /etc/ipsec.d/certs/hostacert.pem
 -----BEGIN CERTIFICATE-----
 MIICjTCCAXUCAQEwDQYJKoZIhvcNAQEFBQAwTTELMAkGA1UEBhMCVVMxEDAOBgNV
 BAgMB0FyaXpvbmExEDAOBgNVBAoMB1Rlc3RsaWIxDTALBgNVBAsMBFRlc3QxCzAJ
@@ -92,7 +92,7 @@ u5B/OUmw8K6MHdzgvyVp5qjVljqfBlUBsmm8TkfMbR61
 -----END CERTIFICATE-----
 EOF
 
-cat << EOF > /etc/ipsec.d/certs/hostakey.pem
+sudo cat << EOF > /etc/ipsec.d/certs/hostakey.pem
 -----BEGIN PRIVATE KEY-----
 MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBALqO7PyPWJRviOZN
 cYq84WYItd6WryR4cryhs+hCNoANkvYR5CoZTzx082hdNE52vlYmGCrBG3hQTxO8
