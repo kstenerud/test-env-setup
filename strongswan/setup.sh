@@ -16,6 +16,7 @@ THEIR_SUBNET=10.0.${THEIR_SUBNET_START}
 
 sudo apt install -y strongswan
 
+sudo ip address del ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
 sudo ip address add ${OUR_SUBNET}.1/24 dev ens3 label ens3:test
 sudo ip route del ${THEIR_SUBNET}.0/24
 sudo ip route add ${THEIR_SUBNET}.0/24 dev ens3 src ${OUR_SUBNET}.1
